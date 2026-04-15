@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - QuizGenius{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h2>Admin Dashboard</h2>
+    <p>Manage questions and monitor platform usage.</p>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Left panel: Question Management -->
+    <div class="glass-panel main-panel">
+        <h3>Add New Question</h3>
+        <form action="{{ url_for('add_question') }}" method="POST" class="add-question-form">
+            <div class="form-group">
+                <label>Question Text</label>
+                <textarea name="question" required rows="3"></textarea>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group flex-1"><label>Subject</label><input type="text" name="subject" required></div>
+                <div class="form-group flex-1"><label>Correct Answer (Exact Match)</label><input type="text" name="answer" required></div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group flex-1"><label>Option 1</label><input type="text" name="opt1" required></div>
+                <div class="form-group flex-1"><label>Option 2</label><input type="text" name="opt2" required></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group flex-1"><label>Option 3</label><input type="text" name="opt3" required></div>
+                <div class="form-group flex-1"><label>Option 4</label><input type="text" name="opt4" required></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Question & NLP Tag</button>
+        </form>
+
+        <h3 style="margin-top:2rem;">Question Bank ({{ questions|length }})</h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Question</th>
+                        <th>Diff.</th>
+                        <th>NLP Tags</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr>
+                        <td>{{ q.subject }}</td>
+                        <td class="truncate" title="{{ q.question }}">{{ q.question }}</td>
+                        <td><span class="badge diff-{{ q.difficulty|lower }}">{{ q.difficulty }}</span></td>
+                        <td><small>{{ q.tags }}</small></td>
+                        <td>
+                            <form action="{{ url_for('delete_question', q_id=q.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this question?')">Del</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Right panel: User activity -->
+    <div class="glass-panel side-panel">
+        <h3>Recent User Activity</h3>
+        <ul class="attempts-list">
+            {% for attempt in attempts %}
+            <li class="attempt-item" style="display:flex; flex-direction:column; gap:0.25rem;">
+                <div><strong>{{ attempt.username }}</strong> took <em>{{ attempt.subject }}</em></div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="text-muted" style="font-size:0.85em;">{{ attempt.date.split('.')[0] }}</span>
+                    <span class="score-display"><strong>{{ attempt.score }}/{{ attempt.total_questions }}</strong></span>
+                </div>
+            </li>
+            {% endfor %}
+            {% if not attempts %}
+            <p>No activity yet.</p>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

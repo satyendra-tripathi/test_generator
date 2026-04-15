@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - QuizGenius{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="glass-panel main-panel">
+        <h2>Welcome, {{ user.username }}! 👋</h2>
+        <p>Ready to challenge yourself today?</p>
+        
+        <div class="test-config-card">
+            <h3>Generate New Test</h3>
+            <form action="{{ url_for('generate_test') }}" method="POST">
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="subject">Select Subject</label>
+                        <select name="subject" id="subject" class="custom-select" required>
+                            <option value="" disabled selected>Choose a subject</option>
+                            {% for subject in subjects %}
+                                <option value="{{ subject }}">{{ subject }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group flex-1">
+                        <label for="difficulty">Select Difficulty</label>
+                        <select name="difficulty" id="difficulty" class="custom-select">
+                            <option value="All">Mixed (All Levels)</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Generate Test</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="glass-panel side-panel">
+        <h3>Previous Attempts</h3>
+        {% if attempts %}
+            <ul class="attempts-list">
+            {% for attempt in attempts %}
+                <li class="attempt-item">
+                    <div class="attempt-meta">
+                        <span class="subject-badge">{{ attempt.subject }}</span>
+                        <span class="difficulty-badge level-{{ attempt.difficulty|lower }}">{{ attempt.difficulty }}</span>
+                    </div>
+                    <div class="score-display">
+                        <strong>{{ attempt.score }} / {{ attempt.total_questions }}</strong>
+                    </div>
+                    <div class="date-text">{{ attempt.date.split(' ')[0] }}</div>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No test attempts yet. Start practicing!</p>
+        {% endif %}
+    </div>
+</div>
+<hr>
+
+<h3>Generate AI Test</h3>
+<form action="/ai_generate" method="POST">
+    <input type="text" name="topic" placeholder="Enter topic" required>
+    <button class="btn btn-success btn-block">Generate AI Test</button>
+</form>
+{% endblock %}

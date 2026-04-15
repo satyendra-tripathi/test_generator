@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to QuizGenius{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <!-- <h1>Master Any Subject with AI-Powered Tests</h1><br> -->
+    <h1>Subject Wise Test Generator</h1>
+    <p>Generate highly-curated, difficulty-adjusted practice tests dynamically. Harness the power of NLP to identify key concepts and challenge your knowledge effectively.</p>
+    
+    <div class="hero-actions">
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-large">Go to Dashboard</a>
+        {% else %}
+            <a href="{{ url_for('signup') }}" class="btn btn-primary btn-large">Get Started Now</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-large">Login</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="features-grid">
+    <div class="feature-card">
+        <h3>🎯 Adaptive Difficulty</h3>
+        <p>Our NLP system analyzes sentence structure and vocabulary to classify questions as Easy, Medium, or Hard.</p>
+    </div>
+    <div class="feature-card">
+        <h3>⚡ Real-time Feedback</h3>
+        <p>Submit your tests and instantly see your score along with the correct answers.</p>
+    </div>
+    <div class="feature-card">
+        <h3>📊 Track Progress</h3>
+        <p>Your attempts are saved in your dashboard, allowing you to review your performance over time.</p>
+    </div>
+</div>
+{% endblock %}

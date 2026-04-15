@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Practice Test - QuizGenius{% endblock %}
+
+{% block content %}
+<div class="test-header">
+    <h2>Practice Test</h2>
+    <div class="timer" id="timer">Loading...</div>
+</div>
+
+<form action="{{ url_for('submit_test') }}" method="POST" id="testForm" class="glass-panel">
+    {% for q in questions %}
+    <div class="question-block" id="qb_{{ loop.index }}" {% if loop.index != 1 %}style="display:none;"{% endif %}>
+        <div class="question-meta">
+            <span class="badge diff-{{ q.difficulty|lower }}">{{ q.difficulty }}</span>
+            <span class="badge sub">{{ q.subject }}</span>
+            <span>Question {{ loop.index }} of {{ questions|length }}</span>
+        </div>
+        
+        <h3 class="question-text">{{ q.question }}</h3>
+        
+        <div class="options-grid">
+            {% for option in q.options %}
+            <label class="option-label">
+                <input type="radio" name="q_{{ q.id }}" value="{{ option }}" required>
+                <div class="option-content">{{ option }}</div>
+            </label>
+            {% endfor %}
+        </div>
+        
+        <div class="test-navigation">
+            {% if loop.index > 1 %}
+                <button type="button" class="btn btn-outline" onclick="showQuestion({{ loop.index - 1 }})">Previous</button>
+            {% else %}
+                <div></div>
+            {% endif %}
+            
+            {% if loop.index < questions|length %}
+                <button type="button" class="btn btn-primary" onclick="showQuestion({{ loop.index + 1 }})">Next</button>
+            {% else %}
+                <button type="submit" class="btn btn-success">Submit Test</button>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Timer logic
+    let timeLeft = {{ questions|length }} * 60; // 1 min per question
+    const timerEl = document.getElementById('timer');
+    
+    const interval = setInterval(() => {
+        let min = Math.floor(timeLeft / 60);
+        let sec = timeLeft % 60;
+        timerEl.innerText = `${min}:${sec < 10 ? '0'+sec : sec}`;
+        
+        if(timeLeft <= 0) {
+            clearInterval(interval);
+            document.getElementById('testForm').submit();
+        }
+        timeLeft--;
+    }, 1000);
+
+    // Pagination logic
+    function showQuestion(index) {
+        document.querySelectorAll('.question-block').forEach(el => el.style.display = 'none');
+        document.getElementById(`qb_${index}`).style.display = 'block';
+    }
+</script>
+{% endblock %}

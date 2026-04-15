@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Test Results - QuizGenius{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="glass-panel results-card">
+        <h2>Test Complete!</h2>
+        
+        <div class="score-circle">
+            <div class="score-number">{{ score }}</div>
+            <div class="score-total">out of {{ total }}</div>
+        </div>
+        
+        <div class="accuracy-text">
+            Accuracy: {{ (score / total * 100)|round|int }}%
+        </div>
+        
+        <div class="actions mt-4">
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary btn-large">Return to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
